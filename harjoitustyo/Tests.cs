@@ -67,28 +67,17 @@ namespace harjoitustyo
             }//if
         }
 
-        private void AddTransitionsToTestStates(List<Transition> transitionSet, List<State> stateSet) { 
-            //Create transition table
-            string[,] transitionTable = new string[stateSet.Count, transitionSet.Count];
-            transitionTable[0, 0] = "B";
-            transitionTable[1, 0] = "C";
-            transitionTable[1, 1] = "A";
-            transitionTable[2, 2] = "C";
-
-            //{A,a,B},{B,a,C},{B,b,A},{C,c,A}
-
-            //Transform state list to ordered array so there's no need to  
-
-            //Loop through transition table
-           
+        private void AddTransitionsToTestStates() { 
             
-            //Create Transitions
-
-            //Create States
         }
 
 
-        private void StringSplitTest() { 
+        private void StringSplitTest() {
+            string alphabet = "a,b,c";
+            string states = "A,B,C";
+            string transitions = "{A,a,B};{B,a,C};{B,b,A};{C,c,A}";
+            string startingState = "A";
+
             string testString ="{A,a,B};{B,a,C};{B,b,A};{C,c,A}"; //Transition string
 
             //string[] sets = testString.Split(';');
@@ -108,6 +97,8 @@ namespace harjoitustyo
 
         }
         #endregion
+
+        
 
     }//Tests
 

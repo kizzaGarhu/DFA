@@ -78,7 +78,7 @@ namespace harjoitustyo
 
         }// RemoveTransition
 
-        private int GetStateToTransit(Transition transition) { 
+        public int GetStateToTransit(Transition transition) { 
             // Check whether given parameter is valid
             if(isTransitionValid(transition)){}
 
@@ -90,7 +90,7 @@ namespace harjoitustyo
             // if transition wasn't found, return -1, which is default id for non-existing state. In other words transition points to state itself.
             return -1;
 
-        }//PerformTransition
+        }//GetStateToTransit
         
         public virtual void stateBehaviour() {
             Console.WriteLine("This is default state behaviour!");
@@ -121,18 +121,130 @@ namespace harjoitustyo
     public class DFA
     {
         private List<State> states;
-        private List<Transition> transitions;
+        private List<Transition> alphabet;
 
         private State currentState;
         public State CurrentState { get { return this.currentState; } set { this.currentState = value; } }
 
+        public DFA(List<Transition> alphabet, List<State>states) {
+            this.states = states;
+            this.alphabet = alphabet;
+        }//DFA
+
+        /// <summary>
+        /// Adds the given state to dfa.
+        /// </summary>
+        /// <param name="stateToAdd"></param>
+        private void AddState(State stateToAdd) { 
+            //Check whether given state already exists in DFA or the given state has same ID already as some other state in DFA 
+            foreach (State existingState in states) { 
+                if(existingState.StateID == stateToAdd.StateID){
+                    Console.WriteLine("ERROR: Cannot add state to the dfa with same id!");
+                    return;
+                }//if
+            }//foreach
+
+            // Add the state
+            states.Add(stateToAdd);
+
+        }//AddState
+
+        /// <summary>
+        /// Removes the given state from dfa.
+        /// </summary>
+        /// <param name="StateToRemove"></param>
+        private void RemoveState(State StateToRemove) { 
+            // Check whether the state to be removed is current state. Removing current state is not allowed.
+            if(StateToRemove.StateID == currentState.StateID){
+                Console.WriteLine("ERROR: Cannot remove state that is currently active.");
+            }//if
+
+            // Loops through dfa's states and compares their id to given state's id. If match is found, state is removed from dfa.
+            foreach(State existingState in states){
+                if(existingState.StateID == StateToRemove.StateID){
+                    states.Remove(StateToRemove);
+                    Console.WriteLine("Removed state " + StateToRemove.StateName + " with an id of " + StateToRemove.StateID.ToString() + " from dfa.");
+                    return;
+                }//if
+            }//foreach
+
+            //If state was not found, print error
+            Console.WriteLine("ERROR: state " + StateToRemove.StateName + " with an id of " + StateToRemove.StateID.ToString() + " was not found in dfa.");
+
+        }//RemoveState
+
+        private void PerformTransition(Transition transition) {
+            int statetoTransit = currentState.GetStateToTransit(transition);
+
+            //  
+            if(statetoTransit != -1){
+                foreach(State newState in states){
+                    if (newState.StateID == statetoTransit) {
+                        // Before transiting to new state, let the old state finish up and the new one to initialize.
+                        currentState.onLeavingState();
+                        currentState = newState;
+                        currentState.onEnteringState();
+                    }//if
+                }//foreach
+            }//if
+        }//PerformTransition
+
     }
     #endregion
+
+
+    /// <summary>
+    /// Creates and returns a DFA  
+    /// </summary>
+    public class DFAFactory {
+
+
+
+        public DFA buildDefaultDFA(string alphabet, string states, string transitionTable, string startingState) {
+            
+            //Resolve alphabet from given string.
+            string[] transitionNames = Utils.ResolveAlphabetFromString(alphabet);
+            
+            //Check for duplicate alphabet (transition names).
+            Utils.CheckForDuplicates(transitionNames);
+            
+            //Create transition parameter for DFA from alphabet. 
+            List<Transition> transitionsParameter = new List<Transition>();
+            for (int i = 0; i < transitionNames.Length; i++) {
+                transitionsParameter.Add(new Transition(transitionNames[i], i));
+            }
+
+            //Resolve states' names
+            string[] stateNames = Utils.ResolveStatesFromString(states); 
+
+            //Check for duplicate state names.
+            Utils.CheckForDuplicates(stateNames);
+
+            //Create state parameter for DFA from list of state names.
+            List<State> stateParameter = new List<State>();
+            //TODO: What kind of state to use?
+            //Create Default states with nothing fancy.
+            
+            //Create transitions.
+
+            //Define starting state
+
+            //resolve transitions
+            
+            DFA dfa = new DFA();    
+        }
+
+    }//DFAFactory
 
     /// <summary>
     /// A static class for a set of helper methods.
     /// </summary>
     public static class Utils{
+        /// <summary>
+        /// Checks given set for duplicates. DFA cannot have multiple transitions or states with same name.
+        /// </summary>
+        /// <param name="set"></param>
+        /// <returns></returns>
         public static bool CheckForDuplicates(string[] set) {
             for (int i = 0; i < set.Length; i++) {
                 for (int j = i+1; j < set.Length; j++) { 
@@ -143,6 +255,44 @@ namespace harjoitustyo
                 }//for
             }//for
             return true;
+        }//CheckForDuplicates
+
+        /// <summary>
+        /// Splits individual transition names from given string and returns results.
+        /// </summary>
+        /// <param name="alphabet"></param>
+        /// <returns></returns>
+        public static string[] ResolveAlphabetFromString(string alphabet) { 
+            string[] result = alphabet.Split(',');
+            return result;
+        }//ResolveAlphabetFromString
+
+        /// <summary>
+        /// Resolves individual state names from given string and returns results.
+        /// </summary>
+        /// <param name="states"></param>
+        /// <returns></returns>
+        public static string[] ResolveStatesFromString(string states) { 
+            string[] result = states.Split(',');
+            return result;
+        }//ResolveStatesFromString
+
+        /// <summary>
+        /// Resolves transitions from given string and returns results.
+        /// </summary>
+        /// <param name="transitions"></param>
+        /// <returns></returns>
+        public static string[] ResolveTransitionsFromString(string transitions) {
+            string[] delimiters = { "{", "}", ";" };
+            string[] sets = transitions.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+            /*
+            for (int i = 0; i < sets.Length; i++)
+            {
+                Console.WriteLine(sets[i]);
+            }
+            Console.WriteLine(sets.Length.ToString());
+            */
+            return sets;
         }
     }
 }
