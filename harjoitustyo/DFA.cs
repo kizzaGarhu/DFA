@@ -6,7 +6,7 @@ using System.Text;
 namespace harjoitustyo
 {
     #region Transition Component
-    class Transition
+    public class Transition
     {
         // Class variables
         private string transitionName;
@@ -45,7 +45,7 @@ namespace harjoitustyo
         }
 
         // Class Behaviour
-        private void AddTransition(Transition transition, State state) { 
+        public void AddTransition(Transition transition, State state) { 
             // Check that the given parameters are valid.
             if(isTransitionValid(transition) || state == null){
                 Console.WriteLine("ERROR in State AddTransition: given parameters are not valid!");
@@ -62,7 +62,7 @@ namespace harjoitustyo
             stateTransitions.Add(transition.TransitionID, state.stateID);
         }//AddTransition
 
-        private void RemoveTransition(Transition transition) { 
+        public void RemoveTransition(Transition transition) { 
             //Check whether given parameter is valid.
             if (isTransitionValid(transition)) {}
 
@@ -121,7 +121,10 @@ namespace harjoitustyo
     public class DFA
     {
         private List<State> states;
+        public List<State> States { get { return this.states; } }
+
         private List<Transition> alphabet;
+        public List<Transition> Alphabet { get { return this.alphabet; } }
 
         private State currentState;
         public State CurrentState { get { return this.currentState; } set { this.currentState = value; } }
@@ -189,6 +192,8 @@ namespace harjoitustyo
             }//if
         }//PerformTransition
 
+
+
     }
     #endregion
 
@@ -198,9 +203,7 @@ namespace harjoitustyo
     /// </summary>
     public class DFAFactory {
 
-
-
-        public DFA buildDefaultDFA(string alphabet, string states, string transitionTable, string startingState) {
+        public DFA BuildDefaultDFA(string alphabet, string states, string transitionTable, string startingStateName) {
             
             //Resolve alphabet from given string.
             string[] transitionNames = Utils.ResolveAlphabetFromString(alphabet);
@@ -214,6 +217,7 @@ namespace harjoitustyo
                 transitionsParameter.Add(new Transition(transitionNames[i], i));
             }
 
+
             //Resolve states' names
             string[] stateNames = Utils.ResolveStatesFromString(states); 
 
@@ -221,20 +225,99 @@ namespace harjoitustyo
             Utils.CheckForDuplicates(stateNames);
 
             //Create state parameter for DFA from list of state names.
-            List<State> stateParameter = new List<State>();
-            //TODO: What kind of state to use?
-            //Create Default states with nothing fancy.
+            List<State> statesParameter = new List<State>();
+            for (int i = 0; i < stateNames.Length; i++) {
+                statesParameter.Add(new DefaultState(stateNames[i],i));
+            }
             
+
             //Create transitions.
+            string[] transitionSets = Utils.ResolveTransitionSetsFromString(transitionTable);
+            
+            //Further split transition sets
+            for (int i = 0; i < transitionSets.Length; i++)
+            {
+                string[] transitionAndState = Utils.ResolveTransitionFromTransitionSet(transitionSets[i]);
+
+                State stateToAddTransition = null;
+                foreach(State state in statesParameter){
+                    if(transitionAndState[0].Equals(state.StateName)){
+                        stateToAddTransition = state;
+                    }//if
+                }//foreach
+
+
+                Transition transitionToAdd = null;
+                foreach(Transition transition in transitionsParameter){
+                    if(transitionAndState[1].Equals(transition.TransitionName)){
+                        transitionToAdd = transition;
+                    }//if
+                }//foreach
+
+                State stateToTransit = null;
+                foreach(State state in statesParameter){
+                    if (transitionAndState[2].Equals(state.StateName)){
+                        stateToTransit = state;
+                    }//if
+                }//foreach
+
+                stateToAddTransition.AddTransition(transitionToAdd, stateToTransit);
+ 
+            }//for
 
             //Define starting state
-
-            //resolve transitions
+            State startingState = null;
+            foreach (State state in statesParameter) { 
+                if(state.StateName.Equals(startingStateName)){
+                    startingState = state;
+                }//if
+            }//foreach
             
-            DFA dfa = new DFA();    
-        }
+            //Build default DFA
+            DFA defaultDFA = new DFA(transitionsParameter, statesParameter);
+            defaultDFA.CurrentState = startingState;
+
+            return defaultDFA;
+        }//BuildDefaultDFA
 
     }//DFAFactory
+
+
+    /// <summary>
+    /// A default state for DFA.   
+    /// </summary>
+    public class DefaultState : State {
+
+        IStateBehaviour defaultStateBehaviour;
+
+        public DefaultState(string stateName, int stateID):base(stateName, stateID) {
+            defaultStateBehaviour = new DefaultStateBehaviour();
+        }
+
+        public override void onEnteringState()
+        {
+            Console.WriteLine("This is an example of overridden onEnteringState method");
+        }
+
+
+        public override void stateBehaviour()
+        {
+            defaultStateBehaviour.Update();
+        }
+    }
+
+    public interface IStateBehaviour
+    {
+        void Update();
+    }
+
+    public class DefaultStateBehaviour : IStateBehaviour
+    {
+        public void Update()
+        {
+            Console.WriteLine("This is an example of default state behaviour Update!");
+        }
+    }
 
     /// <summary>
     /// A static class for a set of helper methods.
@@ -257,6 +340,7 @@ namespace harjoitustyo
             return true;
         }//CheckForDuplicates
 
+        
         /// <summary>
         /// Splits individual transition names from given string and returns results.
         /// </summary>
@@ -267,6 +351,7 @@ namespace harjoitustyo
             return result;
         }//ResolveAlphabetFromString
 
+        
         /// <summary>
         /// Resolves individual state names from given string and returns results.
         /// </summary>
@@ -277,12 +362,13 @@ namespace harjoitustyo
             return result;
         }//ResolveStatesFromString
 
+        
         /// <summary>
         /// Resolves transitions from given string and returns results.
         /// </summary>
         /// <param name="transitions"></param>
         /// <returns></returns>
-        public static string[] ResolveTransitionsFromString(string transitions) {
+        public static string[] ResolveTransitionSetsFromString(string transitions) {
             string[] delimiters = { "{", "}", ";" };
             string[] sets = transitions.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
             /*
@@ -293,6 +379,12 @@ namespace harjoitustyo
             Console.WriteLine(sets.Length.ToString());
             */
             return sets;
+        }//ResolveTransitionsFromString
+        
+        
+        public static string[] ResolveTransitionFromTransitionSet(string transitionSet){
+            string[] result = transitionSet.Split(',');
+            return result;
         }
-    }
+    }//Utils
 }

@@ -55,21 +55,7 @@ namespace harjoitustyo
         #endregion
 
         #region State Component Tests
-        private void CreateTestStates(string[] stateSet) { 
-            if(Utils.CheckForDuplicates(stateSet)){
-                for (int i = 0; i < stateSet.Length; i++) {
-                    testStates.Add(new TestState(stateSet[i], i));
-                    A2 = new TestState("A2", 0); //creates a single state with a same id as one from above set.
-                
-                }//for
-                Console.WriteLine("Test states created!");
-                
-            }//if
-        }
-
-        private void AddTransitionsToTestStates() { 
-            
-        }
+        
 
 
         private void StringSplitTest() {
@@ -101,32 +87,5 @@ namespace harjoitustyo
         
 
     }//Tests
-
-    public class TestState : State {
-        IStateBehaviour testBehaviour;
-        public TestState(string stateName, int stateID) : base(stateName, stateID){
-            testBehaviour = new TestStateBehaviour();
-        }
-
-        public override void onEnteringState()
-        {
-            Console.WriteLine("This is an example of overridden onEnteringState method"); 
-        }
-
-
-        public override void stateBehaviour()
-        {
-            testBehaviour.Update();    
-        }
-    }
-
-    public interface IStateBehaviour{
-        void Update();
-    }
-
-    public class TestStateBehaviour : IStateBehaviour {
-        public void Update() {
-            Console.WriteLine("This TestStateBehaviour Update!");
-        }
-    }
+    
 }
