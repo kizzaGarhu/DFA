@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace harjoitustyo
 {
@@ -27,6 +28,10 @@ namespace harjoitustyo
             // Transition Tests
             // CreateTestTransitions(transitionTestSet1); //should succeed. OK.
             // CreateTestTransitions(transitionTestSet2); //should fail. OK.
+            //CreateTestStates(stateTestSet1); //should succeed. OK.
+            //CreateTestStates(stateTestSet2); //should fail. OK.
+
+            StringSplitTest();
         }
 
         #region Transition Component tests
@@ -61,7 +66,47 @@ namespace harjoitustyo
                 
             }//if
         }
-        
+
+        private void AddTransitionsToTestStates(List<Transition> transitionSet, List<State> stateSet) { 
+            //Create transition table
+            string[,] transitionTable = new string[stateSet.Count, transitionSet.Count];
+            transitionTable[0, 0] = "B";
+            transitionTable[1, 0] = "C";
+            transitionTable[1, 1] = "A";
+            transitionTable[2, 2] = "C";
+
+            //{A,a,B},{B,a,C},{B,b,A},{C,c,A}
+
+            //Transform state list to ordered array so there's no need to  
+
+            //Loop through transition table
+           
+            
+            //Create Transitions
+
+            //Create States
+        }
+
+
+        private void StringSplitTest() { 
+            string testString ="{A,a,B};{B,a,C};{B,b,A};{C,c,A}"; //Transition string
+
+            //string[] sets = testString.Split(';');
+            string[] delimiters = { "{","}",";"};
+            string[] sets = testString.Split(delimiters,StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < sets.Length; i++) {
+                Console.WriteLine(sets[i]);
+            }
+            Console.WriteLine(sets.Length.ToString());
+
+            //resolve state and transitions
+            foreach(string sub in sets){
+                //further split
+                string[] temp = sub.Split(',');
+                Console.WriteLine("From state " + temp[0] + " there is a transtion " + temp[1] + " to state " + temp[2]);
+            }
+
+        }
         #endregion
 
     }//Tests
