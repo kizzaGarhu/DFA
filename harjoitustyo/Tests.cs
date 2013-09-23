@@ -36,6 +36,10 @@ namespace harjoitustyo
             //TryGettingStateToTransit();
 
             //DFA component tests
+            //CreateDFA();
+            //TryAddingStatesToDFA();
+            //TryRemovingStatesFromDFA();
+            TryChangingDFAState();
         }
 
         #region Utils component tests
@@ -243,6 +247,91 @@ namespace harjoitustyo
 
         }
          */ 
+        #endregion
+
+        #region DFA Component tests
+        private DFA _dfa;
+
+        private void CreateDFA() { 
+            _testTransitionsFromString = Utils.CreateTransitionsFromAlphabet(_alphabet);
+            _testStatesFromString = Utils.CreateDefaultStatesFromString(_states);
+            TryAddingTransitionsToState();
+            _dfa = new DFA(_testTransitionsFromString, _testStatesFromString);
+
+            Console.WriteLine("Created DFA!");
+        }//CreateDFA
+
+        private List<State> _listOfStatesInDFA; 
+
+        //TEST:Success.
+        private void TryAddingStatesToDFA() {
+            CreateDFA();
+            
+            _listOfStatesInDFA = _dfa.States;
+            
+            Console.WriteLine("DFA has following states: ");
+            foreach (State state in _listOfStatesInDFA) {
+                Console.WriteLine(state.StateID.ToString() + " " + state.StateName);
+            }//foreach
+
+            _dfa.AddState(new DefaultState("A", 0)); //should fail because of same id and name.
+            _dfa.AddState(new DefaultState("D", 3)); //should succeed.
+            _dfa.AddState(new DefaultState("A", 4)); //should fail because of same name.
+
+            Console.WriteLine("DFA has following states after adding: ");
+            foreach (State state in _listOfStatesInDFA)
+            {
+                Console.WriteLine(state.StateID.ToString() + " " + state.StateName);
+            }//foreach
+            
+            Console.WriteLine("Done adding states to dfa");
+        }
+
+        //TEST: Success.
+        private void TryRemovingStatesFromDFA() {
+            CreateDFA();
+            TryAddingStatesToDFA();
+
+            _dfa.CurrentState = _listOfStatesInDFA[0];
+
+            foreach (State state in _listOfStatesInDFA)
+            {
+                Console.WriteLine(state.StateID.ToString() + " " + state.StateName);
+            }//foreach
+
+            _dfa.RemoveState(_listOfStatesInDFA[2]); //should succeed.
+
+            foreach (State state in _listOfStatesInDFA)
+            {
+                Console.WriteLine(state.StateID.ToString() + " " + state.StateName);
+            }//foreach
+
+            State failTestState = new DefaultState("B", 2); //should fail.
+
+            _dfa.RemoveState(failTestState);
+
+            Console.WriteLine("Done removing states from DFA");
+        }
+
+        //TEST: Succes.
+        private void TryChangingDFAState() {
+            //Create DFA with states and transitions
+            CreateDFA();
+            TryAddingStatesToDFA();
+
+            //assign one of the states active
+            _dfa.CurrentState = _listOfStatesInDFA[0];
+
+            Console.WriteLine("Currently active state: " + _dfa.CurrentState.StateName);
+
+            //perform transition
+            _dfa.PerformTransition(_testTransitionsFromString[0]); //should succeed.
+            
+            Console.WriteLine("Currently active state: " + _dfa.CurrentState.StateName);
+
+            _dfa.PerformTransition(_testTransitionsFromString[2]); //should fail
+            Console.WriteLine("Currently active state: " + _dfa.CurrentState.StateName);
+        }
         #endregion
 
         /*
