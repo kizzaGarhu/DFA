@@ -7,17 +7,26 @@ namespace harjoitustyo
 {
     class Program
     {
+        private static string alphabet = "a,b,c";
+        private static string states = "A,B,C";
+        private static string transitionTable = "{A,a,B};{B,a,C};{B,b,A};{C,c,A}";
+        private static string startingState = "A";
+
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to the DFA generator program!");
-            Console.WriteLine("Start using generator by determing what you want to do: ");
-            PrintInstructions();
-            HandleInput();
+            //Console.WriteLine("Welcome to the DFA generator program!");
+            //Console.WriteLine("Start using generator by determing what you want to do: ");
+            //PrintInstructions();
+            //HandleInput();
             //Tests tests = new Tests();
 
-            //tests.DriveTests();
+            DFA dfa = DFAFactory.BuildDefaultDFA(alphabet, states, transitionTable, startingState);
             
-            //Console.WriteLine("Press any key to continue...");
+
+            
+
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             
         }//Main
@@ -35,5 +44,7 @@ namespace harjoitustyo
                 Console.WriteLine("Pressed A");
             }
         }
+
+        
     }
 }

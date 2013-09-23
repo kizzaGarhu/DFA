@@ -84,7 +84,37 @@ namespace harjoitustyo
         }
         #endregion
 
-        
+        private void ParameterTest() {
+            string alphabet = "a,b,c";
+            string states = "A,B,C";
+            string transitionTable = "{A,a,B};{B,a,C};{B,b,A};{C,c,A}";
+            string startingState = "A";
+            
+            string[] alphabetResult = Utils.ResolveAlphabetFromString(alphabet);
+            string[] statesResult = Utils.ResolveStatesFromString(states);
+            string[] transitionResult = Utils.ResolveTransitionSetsFromString(transitionTable);
+
+            Console.WriteLine("Alphabet for the DFA: ");
+            for (int i = 0; i < alphabetResult.Length; i++)
+            {
+                Console.Write(alphabetResult[i] + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("States for DFA: ");
+            for (int i = 0; i < statesResult.Length; i++)
+            {
+                Console.Write(statesResult[i] + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Transition sets for DFA: ");
+            for (int i = 0; i < transitionResult.Length; i++)
+            {
+                Console.Write(transitionResult[i] + " ");
+            }
+            Console.WriteLine();
+        }
 
     }//Tests
     
