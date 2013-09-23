@@ -9,55 +9,157 @@ namespace harjoitustyo
     class Tests
     {
         // Test variables;
-        private string[] transitionTestSet1 = {"a","b","c","d"}; //should be valid set
-        private string[] transitionTestSet2 = { "a", "a", "b", "c" }; //should be invalid set because of duplicate transition names
-        private Transition a2;
-        private List<Transition> testTransitions = new List<Transition>();
-
-        private string[] stateTestSet1 = { "A","B","C","D"}; //should be valid set
-        private string[] stateTestSet2 = { "A","A","B","C"}; //should be invalid set because of duplicate state names.
-        private State A2;
-        private List<State> testStates = new List<State>();
-
+        private string _alphabet = "a,b,c"; //names of the transitions
+        private string _states = "A,B,C"; //names of the states
+        private string _transitionFunction = "{A-a-B};{B-a-C};{B-b-A};{C-c-A}"; //Transition functions: for example {A,a,B} means State A has a transition a to state B.
+        private string _startingState = "A";
+        
 
         /// <summary>
         /// Drives a set of tests. 
         /// </summary>
         public void DriveTests() {
+            //TestParameterSplitting();
+            //TestStateAndTransitionsSplitting();
+            //TestParameterDuplicates();
             
-            // Transition Tests
-            // CreateTestTransitions(transitionTestSet1); //should succeed. OK.
-            // CreateTestTransitions(transitionTestSet2); //should fail. OK.
-            //CreateTestStates(stateTestSet1); //should succeed. OK.
-            //CreateTestStates(stateTestSet2); //should fail. OK.
-
-            StringSplitTest();
+            //CreateTestTransitions();
+            //CreateTestTransitionsFromString();
+            //CreateTestStates();
+            //CreateTestStatesFromString();
+            TryAddingTransitionsToState();
         }
 
+        #region Utils component tests
+        // TEST:Success.
+        private void TestParameterSplitting() {
+            // Test alphabet string
+            string[] alphabetResult = Utils.SplitParameter(_alphabet);
+            Console.WriteLine("Alphabet: ");
+            for (int i = 0; i < alphabetResult.Length; i++) {
+                Console.WriteLine(alphabetResult[i]);
+            }//for
+
+            //Test states string
+            var statesResult = Utils.SplitParameter(_states);
+            Console.WriteLine("States: ");
+            for (int i = 0; i < statesResult.Length; i++)
+            {
+                Console.WriteLine(statesResult[i]);
+            }//for
+
+            //Test transitionFunction string
+            var transitionFunctionResult = Utils.SplitParameter(_transitionFunction);
+            Console.WriteLine("Transition sets: ");
+            for (int i = 0; i < transitionFunctionResult.Length; i++)
+            {
+                Console.WriteLine(transitionFunctionResult[i]);
+            }
+        }
+
+        //TEST:Success.
+        private void TestStateAndTransitionsSplitting() {
+            var splittingResult = Utils.SplitParameter(_transitionFunction);
+            for (int i = 0; i < splittingResult.Length; i++) {
+                var furtherSplitResult = Utils.SplitStateTransitions(splittingResult[i]);
+
+                Console.WriteLine("From state " + furtherSplitResult[0] + " there is transition " + furtherSplitResult[1] + " to state " + furtherSplitResult[2]);
+                
+            }//for
+        }//TestStateAndTransitionsSplitting
+
+        //TEST:Success.
+        private void TestParameterDuplicates() {
+            var duplicate = "a,a,b,c";
+            var resultAfterSplit = Utils.SplitParameter(duplicate);
+            var isDuplicate = Utils.CheckForDuplicates(resultAfterSplit);
+
+        }
+        #endregion
+
         #region Transition Component tests
-        /// <summary>
-        /// Creates a set of test transitions.
-        /// TEST: Succeed.
-        /// </summary>
-        /// <param name="transitionSet"></param>
-        private void CreateTestTransitions(string[] transitionSet) {
-            if (Utils.CheckForDuplicates(transitionSet)) {
+        private Transition _transitionA;
+        private Transition _transitionB;
 
-                for (int i = 0; i < transitionSet.Length; i++)
-                {
-                    testTransitions.Add(new Transition(transitionSet[i],i));
-                    a2 = new Transition("a2", 0); //creates a single transition with a same id as one from above set.
-                }//for
-                Console.WriteLine("Test transitions created!");
+        //TEST: Success
+        private void CreateTestTransitions() {
+            _transitionA = new Transition("a", 0);
+            _transitionB = new Transition("b", 0);
+
+            Console.WriteLine("Transition name: " + _transitionA.TransitionName + " transition ID: " + _transitionA.TransitionID.ToString());
+            Console.WriteLine("Transition name: " + _transitionB.TransitionName + " transition ID: " + _transitionB.TransitionID.ToString());
+        }//CreateTestTransitions
+
+        //TEST: Success.
+        private void CreateTestTransitionsFromString() {
+            var listOfTestTransitions = Utils.CreateTransitionsFromAlphabet(_alphabet);
+            if(listOfTestTransitions != null){
+                Console.WriteLine("Number of transitions: " + listOfTestTransitions.Count.ToString());
             }//if
-
-        }//CreateTransitions
+            
+        }
         #endregion
 
         #region State Component Tests
-        
+        private State _testStateA;
+        private State _testStateB;
 
+        //TEST: Success.
+        private void CreateTestStates() {
+            _testStateA = new DefaultState("A", 0);
+            _testStateB = new DefaultState("B", 0);
 
+            Console.WriteLine("State name is: " + _testStateA.StateName + " and ID: " + _testStateA.StateID.ToString());
+            Console.WriteLine("State name is: " + _testStateB.StateName + " and ID: " + _testStateB.StateID.ToString());
+        }//CreateTestStates
+
+        //TEST: Success
+        private void CreateTestStatesFromString() {
+            var listOfTestStates = Utils.CreateDefaultStatesFromString(_states);
+            if (listOfTestStates != null)
+            {
+                Console.WriteLine("Number of states: " + listOfTestStates.Count.ToString());
+            }//if
+        }
+
+        //TEST: Success.
+        private void TryAddingTransitionsToState() {
+            var testTransitionsFromString = Utils.CreateTransitionsFromAlphabet(_alphabet); //List of transitions
+            var testStatesFromString = Utils.CreateDefaultStatesFromString(_states); //List of states
+
+            var splittingResult = Utils.SplitParameter(_transitionFunction);
+            for (int i = 0; i < splittingResult.Length; i++)
+            {
+                var furtherSplitResult = Utils.SplitStateTransitions(splittingResult[i]);
+
+                Console.WriteLine("From state " + furtherSplitResult[0] + " there is transition " + furtherSplitResult[1] + " to state " + furtherSplitResult[2]);
+
+                foreach(var state in testStatesFromString){
+                    if(state.StateName.Equals(furtherSplitResult[0])){
+                        
+                        Transition tempTransition = null;
+                        foreach (var trans in testTransitionsFromString) { 
+                            if(trans.TransitionName.Equals(furtherSplitResult[1])){
+                                tempTransition = trans;
+                            }//if
+                        }//foreach
+                        
+                        State tempState = null;
+                        foreach (var stat in testStatesFromString) { 
+                            if(stat.StateName.Equals(furtherSplitResult[2])){
+                                tempState = stat;
+                            }//if
+                        }//foreach
+
+                        state.AddTransition(tempTransition, tempState);
+                        Console.WriteLine("Added transition " + tempTransition.TransitionName + " leading to state " + tempState.StateName + " in state " + state.StateName + " transitions.");
+                    }//if
+                }
+
+            }//for
+        }
+
+        /*
         private void StringSplitTest() {
             string alphabet = "a,b,c";
             string states = "A,B,C";
@@ -82,8 +184,10 @@ namespace harjoitustyo
             }
 
         }
+         */ 
         #endregion
 
+        /*
         private void ParameterTest() {
             string alphabet = "a,b,c";
             string states = "A,B,C";
@@ -115,6 +219,7 @@ namespace harjoitustyo
             }
             Console.WriteLine();
         }
+         */ 
 
     }//Tests
     

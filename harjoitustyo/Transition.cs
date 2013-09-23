@@ -8,11 +8,11 @@ namespace harjoitustyo
     public class Transition
     {
         // Class variables
-        private string transitionName;
-        public string TransitionName { get { return this.transitionName; } }
+        private string _transitionName;
+        public string TransitionName { get { return _transitionName; } }
 
-        private int transitionID;
-        public int TransitionID { get { return this.TransitionID; } }
+        private int _transitionID;
+        public int TransitionID { get { return _transitionID; } }
 
         /// <summary>
         /// Assigns given parameters to variables.
@@ -21,8 +21,8 @@ namespace harjoitustyo
         /// <param name="transitionID"></param>
         public Transition(string transitionName, int transitionID)
         {
-            this.transitionName = transitionName;
-            this.transitionID = transitionID;
+            _transitionName = transitionName;
+            _transitionID = transitionID;
         }//Transition
     }//Transition
 }

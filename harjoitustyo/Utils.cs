@@ -11,6 +11,22 @@ namespace harjoitustyo
     public static class Utils
     {
         /// <summary>
+        /// Splits the given string.
+        /// </summary>
+        /// <param name="stringToSplit"></param>
+        /// <returns></returns>
+        public static string[] SplitParameter(string stringToSplit) { 
+            string[] delimiters = {"{","}",";",","};
+            string[] result = stringToSplit.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+            return result;
+        }//SplitParameter
+
+        public static string[] SplitStateTransitions(string stringToSplit) {
+            var result = stringToSplit.Split('-');
+            return result;
+        }
+        
+        /// <summary>
         /// Checks given set for duplicates. DFA cannot have multiple transitions or states with same name.
         /// </summary>
         /// <param name="set"></param>
@@ -31,7 +47,64 @@ namespace harjoitustyo
             return true;
         }//CheckForDuplicates
 
+        public static List<Transition> CreateTransitionsFromAlphabet(string alphabet) {
+            //Check whether given parameter is valid
+            if(alphabet == null){
+                Console.WriteLine("ERROR: parameter is invalid!");
+                return null;
+            }
 
+            //Split transition names from given string.
+            var splittingResult = SplitParameter(alphabet);
+
+            //Check for duplicates.
+            if(CheckForDuplicates(splittingResult)){
+                var transitions = new List<Transition>();
+
+                for (int i = 0; i < splittingResult.Length; i++) {
+                    transitions.Add(new Transition(splittingResult[i], i));
+                }//for
+                
+                return transitions;
+            }
+
+            Console.WriteLine("Couldn't create transitions");
+            return null;
+        }//CreateTransitionsFromAlphabet
+
+        public static List<State> CreateDefaultStatesFromString(string statesString)
+        {
+            //Check whether given parameter is valid
+            if (statesString == null)
+            {
+                Console.WriteLine("ERROR: parameter is invalid!");
+                return null;
+            }
+
+            //Split transition names from given string.
+            var splittingResult = SplitParameter(statesString);
+
+            //Check for duplicates.
+            if (CheckForDuplicates(splittingResult))
+            {
+                var states = new List<State>();
+
+                for (int i = 0; i < splittingResult.Length; i++)
+                {
+                    states.Add(new DefaultState(splittingResult[i], i));
+                }//for
+
+                return states;
+            }
+
+            Console.WriteLine("Couldn't create transitions");
+            return null;
+        }//CreateTransitionsFromAlphabet
+
+
+
+        //#####################################################################
+        /*
         /// <summary>
         /// Splits individual transition names from given string and returns results.
         /// </summary>
@@ -65,13 +138,13 @@ namespace harjoitustyo
         {
             string[] delimiters = { "{", "}", ";" };
             string[] sets = transitionTable.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            /*
-            for (int i = 0; i < sets.Length; i++)
-            {
-                Console.WriteLine(sets[i]);
-            }
-            Console.WriteLine(sets.Length.ToString());
-            */
+            
+            //for (int i = 0; i < sets.Length; i++)
+            //{
+                //Console.WriteLine(sets[i]);
+            //}
+            //Console.WriteLine(sets.Length.ToString());
+            
             return sets;
         }//ResolveTransitionsFromString
 
@@ -81,5 +154,6 @@ namespace harjoitustyo
             string[] result = transitionSet.Split(',');
             return result;
         }
+        */
     }//Utils
 }

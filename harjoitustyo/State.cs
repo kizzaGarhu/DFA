@@ -25,13 +25,14 @@ namespace harjoitustyo
         // Class Behaviour
         public void AddTransition(Transition transition, State state)
         {
+            
             // Check that the given parameters are valid.
-            if (isTransitionValid(transition) || state == null)
+            if (transition==null || state == null)
             {
                 Console.WriteLine("ERROR in State AddTransition: given parameters are not valid!");
                 return;
             }//if
-
+            
             // Check for duplicates - a deterministic finite automata cannot have a transition with a same id multiple times.
             if (stateTransitions.ContainsKey(transition.TransitionID))
             {

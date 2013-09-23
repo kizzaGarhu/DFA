@@ -11,9 +11,9 @@ namespace harjoitustyo
     public static class DFAFactory
     {
 
-        public static DFA BuildDefaultDFA(string alphabet, string states, string transitionTable, string startingStateName)
-        {
-
+        //public static DFA BuildDefaultDFA(string alphabet, string states, string transitionTable, string startingStateName)
+        //{
+            /*
             //Check that the given parameters are valid.
             if (alphabet == null || states == null || transitionTable == null || startingStateName == null)
             {
@@ -103,9 +103,10 @@ namespace harjoitustyo
             //Build default DFA
             DFA defaultDFA = new DFA(transitionsParameter, statesParameter);
             defaultDFA.CurrentState = startingState;
-
+            
             return defaultDFA;
-        }//BuildDefaultDFA
+            */  
+        //}//BuildDefaultDFA
 
     }//DFAFactory
 }
