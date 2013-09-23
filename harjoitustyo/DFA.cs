@@ -19,7 +19,7 @@ namespace harjoitustyo
         public DFA(List<Transition> alphabet, List<State>states) {
             this.states = states;
             this.alphabet = alphabet;
-        }//DFA
+        }//Constructor
 
         /// <summary>
         /// Adds the given state to dfa.

@@ -19,15 +19,23 @@ namespace harjoitustyo
         /// Drives a set of tests. 
         /// </summary>
         public void DriveTests() {
+            //Utils component tests
             //TestParameterSplitting();
             //TestStateAndTransitionsSplitting();
             //TestParameterDuplicates();
             
+            //Transition component tests
             //CreateTestTransitions();
             //CreateTestTransitionsFromString();
+            
+            //State component tests
             //CreateTestStates();
             //CreateTestStatesFromString();
-            TryAddingTransitionsToState();
+            //TryAddingTransitionsToState();
+            //TryRemovingTransitionsFromState();
+            //TryGettingStateToTransit();
+
+            //DFA component tests
         }
 
         #region Utils component tests
@@ -122,10 +130,13 @@ namespace harjoitustyo
             }//if
         }
 
+        private List<Transition> _testTransitionsFromString;
+        private List<State> _testStatesFromString;
+
         //TEST: Success.
         private void TryAddingTransitionsToState() {
-            var testTransitionsFromString = Utils.CreateTransitionsFromAlphabet(_alphabet); //List of transitions
-            var testStatesFromString = Utils.CreateDefaultStatesFromString(_states); //List of states
+            _testTransitionsFromString = Utils.CreateTransitionsFromAlphabet(_alphabet); //List of transitions
+            _testStatesFromString = Utils.CreateDefaultStatesFromString(_states); //List of states
 
             var splittingResult = Utils.SplitParameter(_transitionFunction);
             for (int i = 0; i < splittingResult.Length; i++)
@@ -134,18 +145,18 @@ namespace harjoitustyo
 
                 Console.WriteLine("From state " + furtherSplitResult[0] + " there is transition " + furtherSplitResult[1] + " to state " + furtherSplitResult[2]);
 
-                foreach(var state in testStatesFromString){
+                foreach(var state in _testStatesFromString){
                     if(state.StateName.Equals(furtherSplitResult[0])){
                         
                         Transition tempTransition = null;
-                        foreach (var trans in testTransitionsFromString) { 
+                        foreach (var trans in _testTransitionsFromString) { 
                             if(trans.TransitionName.Equals(furtherSplitResult[1])){
                                 tempTransition = trans;
                             }//if
                         }//foreach
                         
                         State tempState = null;
-                        foreach (var stat in testStatesFromString) { 
+                        foreach (var stat in _testStatesFromString) { 
                             if(stat.StateName.Equals(furtherSplitResult[2])){
                                 tempState = stat;
                             }//if
@@ -154,10 +165,57 @@ namespace harjoitustyo
                         state.AddTransition(tempTransition, tempState);
                         Console.WriteLine("Added transition " + tempTransition.TransitionName + " leading to state " + tempState.StateName + " in state " + state.StateName + " transitions.");
                     }//if
-                }
+                }//foreach
 
             }//for
+        }//TryAddingTransitionsToState
+
+        //TEST: Success.
+        private void TryRemovingTransitionsFromState() {
+            TryAddingTransitionsToState();
+
+            State state = _testStatesFromString[1];
+            Console.WriteLine("State name: " + state.StateName);
+
+            var testStatesTransitions = state.StateTransitions;
+
+            //print state's transitions
+            foreach (var entry in testStatesTransitions) {
+                Console.WriteLine("Transition ID: " + entry.Key.ToString() + " State ID: " + entry.Value.ToString());
+            }
+
+            state.RemoveTransition(_testTransitionsFromString[1]);
+
+            //print state's transitions
+            foreach (var entry in testStatesTransitions)
+            {
+                Console.WriteLine("Transition ID: " + entry.Key.ToString() + " State ID: " + entry.Value.ToString());
+            }
         }
+
+        //TEST: success
+        private void TryGettingStateToTransit() {
+            TryAddingTransitionsToState();
+
+            State state = _testStatesFromString[1];
+            Console.WriteLine("State name: " + state.StateName);
+
+            var testStatesTransitions = state.StateTransitions;
+
+            //print state's transitions
+            foreach (var entry in testStatesTransitions)
+            {
+                Console.WriteLine("Transition ID: " + entry.Key.ToString() + " State ID: " + entry.Value.ToString());
+            }
+
+            Console.WriteLine("Transition name: " + _testTransitionsFromString[1].TransitionName + " transition ID: " + _testTransitionsFromString[1].TransitionID.ToString());
+
+            int stateIdToTransit = state.GetStateToTransit(_testTransitionsFromString[1]); //should return 0.
+            Console.WriteLine("State to transit has id of: " + stateIdToTransit.ToString());
+
+            stateIdToTransit = state.GetStateToTransit(_testTransitionsFromString[2]); //should return -1.
+            Console.WriteLine("State to transit has id of: " + stateIdToTransit.ToString());
+        } 
 
         /*
         private void StringSplitTest() {

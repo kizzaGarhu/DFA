@@ -12,10 +12,6 @@ namespace harjoitustyo
             Tests tests = new Tests();
 
             tests.DriveTests();
-            
-            
-
-            
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();

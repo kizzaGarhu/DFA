@@ -8,18 +8,19 @@ namespace harjoitustyo
     public abstract class State
     {
         // Class variables
-        protected string stateName;
-        public string StateName { get { return this.stateName; } }
+        protected string _stateName;
+        public string StateName { get { return _stateName; } }
 
-        protected int stateID;
-        public int StateID { get { return this.stateID; } }
+        protected int _stateID;
+        public int StateID { get { return _stateID; } }
 
         protected Dictionary<int, int> stateTransitions = new Dictionary<int, int>();
+        public Dictionary<int, int> StateTransitions { get { return stateTransitions; } }
 
         public State(string stateName, int stateID)
         {
-            this.stateName = stateName;
-            this.stateID = stateID;
+            this._stateName = stateName;
+            this._stateID = stateID;
         }
 
         // Class Behaviour
@@ -41,7 +42,7 @@ namespace harjoitustyo
             }
 
             // Add transition
-            stateTransitions.Add(transition.TransitionID, state.stateID);
+            stateTransitions.Add(transition.TransitionID, state._stateID);
         }//AddTransition
 
         public void RemoveTransition(Transition transition)
@@ -54,7 +55,8 @@ namespace harjoitustyo
             {
                 stateTransitions.Remove(transition.TransitionID);
                 Console.WriteLine("Removed transition with the id of " + transition.TransitionID.ToString() +
-                    " and name of " + transition.TransitionName + " from state " + stateName + " with id " + stateID);
+                    " and name of " + transition.TransitionName + " from state " + _stateName + " with id " + _stateID);
+                return;
             }//if
 
             //If transition wasn't found, write error
@@ -85,12 +87,12 @@ namespace harjoitustyo
 
         public virtual void onEnteringState()
         {
-            Console.WriteLine("Activing state with id of " + stateID.ToString() + " and name of " + stateName);
+            Console.WriteLine("Activing state with id of " + _stateID.ToString() + " and name of " + _stateName);
         }
 
         public virtual void onLeavingState()
         {
-            Console.WriteLine("Deactiving state with id of " + stateID.ToString() + " and name of " + stateName);
+            Console.WriteLine("Deactiving state with id of " + _stateID.ToString() + " and name of " + _stateName);
         }
 
         private bool isTransitionValid(Transition transition)
