@@ -71,10 +71,14 @@ namespace harjoitustyo
 
         }//RemoveState
 
+        /// <summary>
+        /// Performs a transition to a new state. 
+        /// </summary>
+        /// <param name="transition"></param>
         public void PerformTransition(Transition transition) {
+            // Check the state's transitions and get the id of the state where to transit. If state doesn't have transition, it returns -1, which means looping back to itself
             int statetoTransit = _currentState.GetStateToTransit(transition);
-
-            //  
+ 
             if(statetoTransit != -1){
                 foreach(State newState in _states){
                     if (newState.StateID == statetoTransit) {
@@ -85,6 +89,16 @@ namespace harjoitustyo
                     }//if
                 }//foreach
             }//if
+        }//PerformTransition
+
+        public void PerformTransition(string transitionName) { 
+            //Check Whether transition exists
+            foreach(Transition transition in _alphabet){
+                if(transition.TransitionName.Equals(transitionName)){
+                    PerformTransition(transition);
+                }//if
+            }//foreach
+            
         }//PerformTransition
 
     }//DFA

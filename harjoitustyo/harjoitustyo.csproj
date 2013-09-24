@@ -53,6 +53,7 @@
     <Compile Include="State.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="Transition.cs" />
+    <Compile Include="UserInterface.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

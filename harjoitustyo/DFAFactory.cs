@@ -10,6 +10,60 @@ namespace harjoitustyo
     /// </summary>
     public static class DFAFactory
     {
+        public static DFA BuildDefaultDFA(string alphabet, string states, string transitionFunction, string startingState) {
+            // Split Parameters for DFA from given strings.
+            List<Transition> alphabetParameter = Utils.CreateTransitionsFromAlphabet(alphabet);
+            List<State> statesParameter = Utils.CreateDefaultStatesFromString(states);
+
+            // Split transitionFunction string and create transitions to states.
+            var splittingResult = Utils.SplitParameter(transitionFunction);
+            for (int i = 0; i < splittingResult.Length; i++)
+            {
+                var furtherSplitResult = Utils.SplitStateTransitions(splittingResult[i]);
+
+                //Console.WriteLine("From state " + furtherSplitResult[0] + " there is transition " + furtherSplitResult[1] + " to state " + furtherSplitResult[2]);
+
+                foreach (var state in statesParameter)
+                {
+                    if (state.StateName.Equals(furtherSplitResult[0]))
+                    {
+                        Transition tempTransition = null;
+                        foreach (var trans in alphabetParameter)
+                        {
+                            if (trans.TransitionName.Equals(furtherSplitResult[1]))
+                            {
+                                tempTransition = trans;
+                            }//if
+                        }//foreach
+
+                        State tempState = null;
+                        foreach (var stat in statesParameter)
+                        {
+                            if (stat.StateName.Equals(furtherSplitResult[2]))
+                            {
+                                tempState = stat;
+                            }//if
+                        }//foreach
+
+                        state.AddTransition(tempTransition, tempState);
+                        Console.WriteLine("Added transition " + tempTransition.TransitionName + " leading to state " + tempState.StateName + " in state " + state.StateName + " transitions.");
+                    }//if
+                }//foreach
+
+            }//for
+
+            DFA dfa = new DFA(alphabetParameter, statesParameter);
+            
+            // Assign starting state
+            foreach(State state in statesParameter){
+                if(state.StateName.Equals(startingState)){
+                    dfa.CurrentState = state;
+                }//if
+            }//foreach
+
+            return dfa;
+        }
+
 
         //public static DFA BuildDefaultDFA(string alphabet, string states, string transitionTable, string startingStateName)
         //{
